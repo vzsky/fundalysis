@@ -19,10 +19,15 @@ class Fundamental :
 
         self.revenues           = self.income.loc["Total Revenue"]                              .to_numpy()
         self.invested_cap       = self.balance.loc["Invested Capital"]                          .to_numpy()
+        self.gross              = self.income.loc["Gross Profit"]                               .to_numpy()
+        self.pretax             = self.income.loc["Pretax Income"]                              .to_numpy()
         self.net_after_tax      = self.income.loc["Net Income"]                                 .to_numpy()
         self.shares             = self.balance.loc["Ordinary Shares Number"]                    .to_numpy()
         self.income_date        = self.income.columns                                           .to_numpy()
+        self.oper_cashflow      = self.cashflow.loc["Operating Cash Flow"]                           .to_numpy()
         self.free_cashflow      = self.cashflow.loc["Free Cash Flow"]                           .to_numpy()
+        self.assets             = self.balance.loc["Total Assets"]                              .to_numpy()
+        self.current_lia        = self.balance.loc["Current Liabilities"]                       .to_numpy()
         self.liability          = self.balance.loc["Total Liabilities Net Minority Interest"]   .to_numpy()
 
         self.years              = np.array([np.datetime_as_string(d, "Y") for d in self.income_date])
@@ -59,7 +64,15 @@ class Fundamental :
         self.historic_pfcf      = self.income_price / self.free_cashflow * self.shares 
         self.historic_pfcf_avg4 = avg(self.historic_pfcf)
 
-        self.li_per_fcf         = self.liability[0] / self.free_cashflow[0]
+        self.li_per_fcf         = self.liability / self.free_cashflow
+
+        self.gross_margin       = 100.0 * self.gross / self.revenues
+        self.pretax_margin      = 100.0 * self.pretax / self.revenues
+        self.net_margin         = 100.0 * self.net_after_tax / self.revenues
+        self.fcf_margin         = 100.0 * self.free_cashflow / self.revenues
+
+        self.current_lia_ratio  = 100.0 * self.current_lia / self.liability
+        self.assets_lia_ratio   = self.assets / self.liability
 
 
     ################################################################
