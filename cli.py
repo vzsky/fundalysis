@@ -104,7 +104,7 @@ def show(symbol: str):
     value.add_row("Liability", *[ read(g, "$") for g in ticker.liability ])
     value.add_row("Current Liability", *[ read(g, "$") for g in ticker.current_lia ])
     value.add_row("Current Liability Ratio", *[ read(g, "%") for g in ticker.current_lia_ratio ])
-    value.add_row("Asset / Liability", *[ read(g, "%") for g in ticker.assets_lia_ratio ]) 
+    value.add_row("Asset / Liability", *[ read(g, "x") for g in ticker.assets_lia_ratio ]) 
     value.add_row()
     value.add_row("ROIC", *[ read(g, "%") for g in ticker.roic ])
     value.add_row("P/E", *[ read(g, "x") for g in ticker.historic_pe ])
@@ -152,6 +152,7 @@ if __name__ == "__main__":
             try : 
                 inp = input("$ ")
                 if inp == "" : continue
+                if inp == "exit" : break
             except Exception as err: 
                 break
             history.append(inp)
