@@ -89,6 +89,9 @@ def show(symbol: str):
         value.add_column(c, justify="right")
 
     value.add_row("Revenue", *[ read(g, "$") for g in ticker.revenues ])
+    value.add_row("Gross Profit", *[ read(g, "$") for g in ticker.gross ])
+    value.add_row("Pretax Income", *[ read(g, "$") for g in ticker.pretax ])
+    value.add_row("Net Income", *[ read(g, "$") for g in ticker.net_after_tax])
     value.add_row("Gross Margin", *[ read(g, "%") for g in ticker.gross_margin ])
     value.add_row("Pretax Margin", *[ read(g, "%") for g in ticker.pretax_margin ])
     value.add_row("Net Margin", *[ read(g, "%") for g in ticker.net_margin ])
@@ -96,6 +99,12 @@ def show(symbol: str):
     value.add_row()
     value.add_row("Operating Cash Flow", *[ read(g, "$") for g in ticker.oper_cashflow ])
     value.add_row("Free Cash Flow", *[ read(g, "$") for g in ticker.free_cashflow ])
+    value.add_row()
+    value.add_row("Asset", *[ read(g, "$") for g in ticker.assets ])
+    value.add_row("Liability", *[ read(g, "$") for g in ticker.liability ])
+    value.add_row("Current Liability", *[ read(g, "$") for g in ticker.current_lia ])
+    value.add_row("Current Liability Ratio", *[ read(g, "%") for g in ticker.current_lia_ratio ])
+    value.add_row("Asset / Liability", *[ read(g, "%") for g in ticker.assets_lia_ratio ]) 
     value.add_row()
     value.add_row("ROIC", *[ read(g, "%") for g in ticker.roic ])
     value.add_row("P/E", *[ read(g, "x") for g in ticker.historic_pe ])
@@ -118,7 +127,7 @@ def show(symbol: str):
         Panel(f"3 year Net Income Growth \nis at {chcol(ticker.net_growth_avg3, lambda x: x > 1, '%')}"),  
         Panel(f"3 year Share Buyback \nis at {chcol(ticker.share_growth_avg3, lambda x: x < -1, '%')}"), 
         Panel(f"3 year Cash Flow Growth \nis at {chcol(ticker.fcf_growth_avg3, lambda x: x > 1, '%')}"), 
-        Panel(f"Liability Per Free Cash Flow \nis at {chcol(ticker.li_per_fcf[0], lambda x: x < 3, '%')}"), 
+        Panel(f"Liability Per Free Cash Flow \nis at {chcol(ticker.li_per_fcf[0], lambda x: x < 3, 'x')}"), 
     ]))
 
 @command
