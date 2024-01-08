@@ -34,11 +34,11 @@ def read (number, unit="", color=True, colrev=0) -> str :
 
     def scale (num) -> str : 
         s = lambda n : "{:.2f}".format(n)
-        if num > 1000_000_000 : 
+        if abs(num) > 1000_000_000 : 
             return s(num / 1000_000_000) + "B" 
-        if num > 1000_000 : 
+        if abs(num) > 1000_000 : 
             return s(num / 1000_000) + "M" 
-        if num > 1000 : 
+        if abs(num) > 1000 : 
             return s(num / 1000) 
         return s(num) 
 
