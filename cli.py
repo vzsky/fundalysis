@@ -31,7 +31,9 @@ def read (number, unit="", color=True, colrev=0) -> str :
 
     def addunit (s) : 
         if isnan(number) : return s
-        if unit == "$" : return "$" + s
+        if unit == "$" : 
+            if s[0] == "-" : return "-$" + s[1:]
+            else : return "$" + s
         return s + unit
 
     def scale (num) -> str : 
