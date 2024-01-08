@@ -5,7 +5,8 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.columns import Columns
-import readline
+from math import isnan
+import readline                     # Need this unused import   
 
 import signal
 
@@ -29,11 +30,14 @@ def read (number, unit="", color=True, colrev=0) -> str :
         return '[green]' + s + '[/green]'
 
     def addunit (s) : 
+        if isnan(number) : return s
         if unit == "$" : return "$" + s
         return s + unit
 
     def scale (num) -> str : 
         s = lambda n : "{:.2f}".format(n)
+        if isnan(num) : 
+            return "[purple]NaN[/purple]"
         if abs(num) > 1000_000_000 : 
             return s(num / 1000_000_000) + "B" 
         if abs(num) > 1000_000 : 

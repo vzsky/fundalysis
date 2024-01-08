@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 avg = lambda x : float(sum(x)) / len(x)
 growth = lambda x : 100.0 * (x[:-1] - x[1:]) / x[1:]
 
-FIVEDAYS = timedelta(days=5)
+TWOWEEKS = timedelta(days=14)
 
 class Fundamental :
     def __init__(self, symbol):
@@ -24,16 +24,19 @@ class Fundamental :
         self.net_after_tax      = self.income.loc["Net Income"]                                 .to_numpy()
         self.shares             = self.balance.loc["Ordinary Shares Number"]                    .to_numpy()
         self.income_date        = self.income.columns                                           .to_numpy()
-        self.oper_cashflow      = self.cashflow.loc["Operating Cash Flow"]                           .to_numpy()
+        self.oper_cashflow      = self.cashflow.loc["Operating Cash Flow"]                      .to_numpy()
         self.free_cashflow      = self.cashflow.loc["Free Cash Flow"]                           .to_numpy()
         self.assets             = self.balance.loc["Total Assets"]                              .to_numpy()
         self.current_lia        = self.balance.loc["Current Liabilities"]                       .to_numpy()
         self.liability          = self.balance.loc["Total Liabilities Net Minority Interest"]   .to_numpy()
 
         self.years              = np.array([np.datetime_as_string(d, "Y") for d in self.income_date])
+        
+        def get_hist(day):
+            try: return self.ticker.history(start=day, end=day+TWOWEEKS, interval="1d").iloc[0, 3] # Close Price
+            except: return float('nan')
 
-        self.income_price       = np.array([ self.ticker.history(start=day, end=day+FIVEDAYS, interval="1d").iloc[0, 3] # Close Price
-            for day in self.income_date.astype('datetime64[s]').tolist() ])
+        self.income_price       = np.array([ get_hist(day) for day in self.income_date.astype('datetime64[s]').tolist() ])
 
         self.price = self.ticker.info["currentPrice"]
 
