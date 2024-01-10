@@ -1,6 +1,10 @@
-avg = lambda x : float(sum(x)) / len(x)
-growth = lambda x : 100.0 * (x[:-1] - x[1:]) / x[1:]
+import numpy as np
 
+avg = lambda x : float(sum(x)) / len(x)
+def growth (x) :
+    num = (100.0 * (x[:-1] - x[1:])) 
+    dem = np.array([a if a != 0 else np.nan for a in x[1:]])
+    return num / dem
 
 class Fundamental :
     def __init__(self, symbol, dataProvider, aux=[]):
@@ -23,6 +27,7 @@ class Fundamental :
         self.free_cashflow = self.data.free_cashflow
         self.shares = self.data.shares
         self.income_price = self.data.income_price
+        self.invested_cap = self.data.invested_cap
         self.assets = self.data.assets
         self.liability = self.data.liability
         self.current_lia = self.data.current_lia
@@ -43,7 +48,7 @@ class Fundamental :
         self.share_growth       = growth(self.shares)
         self.share_growth_avg3  = avg(self.share_growth[:3])
 
-        self.roic               = 100.0 * self.net_after_tax / self.data.invested_cap
+        self.roic               = 100.0 * self.net_after_tax / self.invested_cap
         self.roic_avg4          = avg(self.roic[:4])
 
         self.pe                 = (self.price * self.shares[0]) / self.net_after_tax[0]
@@ -54,7 +59,7 @@ class Fundamental :
         self.historic_pfcf      = self.income_price / self.free_cashflow * self.shares 
         self.historic_pfcf_avg4 = avg(self.historic_pfcf[:4])
 
-        self.li_per_fcf         = self.data.liability / self.data.free_cashflow
+        self.li_per_fcf         = self.liability / self.free_cashflow
 
         self.gross_margin       = 100.0 * self.gross / self.revenues
         self.pretax_margin      = 100.0 * self.pretax / self.revenues
@@ -76,8 +81,8 @@ class Fundamental :
         # returns the fair price when the given condition are met.
 
         # replace net_margin and pe with fcf_margin and pfcf to ge tthe discount free cash flow model.
-        shares = self.data.shares[0]
-        revenue = self.data.revenues[0]
+        shares = self.shares[0]
+        revenue = self.revenues[0]
 
         r = (1+growth)/(1+discount)
         n = year

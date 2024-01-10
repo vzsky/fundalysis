@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# ADD SHEBANG TO MAKE EXECUTABLE /usr/bin/env python3
 
 ########################### Block CTRL-C ###########################
 import signal

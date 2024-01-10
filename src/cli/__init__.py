@@ -1,5 +1,6 @@
 from math import isnan
 from rich.console import Console
+from src.data.polyYahoo import PolyYahooProvider
 from src.data.yahoo import YahooProvider
 from src.data.polygonio import PolygonProvider
 from src.fundamental import Fundamental
@@ -27,7 +28,8 @@ class CliTools :
 
     def load(self, symbol: str):
         if symbol in self.cache : return
-        self.cache[symbol] = Fundamental(symbol, PolygonProvider, [os.environ["POLYGON_API"]])
+        self.cache[symbol] = Fundamental(symbol, PolyYahooProvider, [os.environ["POLYGON_API"]])
+        # self.cache[symbol] = Fundamental(symbol, PolygonProvider, [os.environ["POLYGON_API"]])
         # self.cache[symbol] = Fundamental(symbol, YahooProvider)
 
 def read (number, unit="", color=True, colrev=0) -> str : 
@@ -45,7 +47,7 @@ def read (number, unit="", color=True, colrev=0) -> str :
 
     def scale (num) -> str : 
         s = lambda n : "{:.2f}".format(n)
-        if isnan(num) : 
+        if num == None or isnan(num) : 
             return "[purple]NaN[/purple]"
         if abs(num) > 1000_000_000 : 
             return s(num / 1000_000_000) + "B" 

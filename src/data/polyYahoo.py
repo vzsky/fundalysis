@@ -1,12 +1,12 @@
 import numpy as np
-from polygon import StocksClient, ReferenceClient
+from polygon import ReferenceClient
 from typing import Any
 import functools
-from datetime import datetime, timedelta
-
+from datetime import timedelta
+import yfinance as yf
 from src.data.base import DataProvider
 
-FIVEYEARS = timedelta(days=5*356)
+TENDAYS = timedelta(days=10)
 NaN = float('nan')
 
 ##########################################################################################
@@ -28,20 +28,30 @@ def gusd (s, *xs) :
 def text_to_date (text) : # YYYY-MM-DD 
     return np.datetime64(text, 'D')
 
+def expand (l, n) : # Expand list l to length n
+    if (len(l) >= n) : return l[:n]
+    return np.append(l, np.zeros(n-len(l)) + np.nan)
+
+
+
 ##########################################################################################
 
-class PolygonProvider (DataProvider):
+class PolyYahooProvider (DataProvider):
     def __init__ (self, symbol, API_KEY) : 
         self.symbol = symbol
 
-        stocks_client = StocksClient(API_KEY, connect_timeout=5, read_timeout=5)
         reference_client = ReferenceClient(API_KEY, connect_timeout=5, read_timeout=5)
         fin: Any = reference_client.get_stock_financials_vx(symbol.upper(), time_frame="annual", limit=10, order="desc") 
         assert(fin['status'] == 'OK')
         statements = fin['results']
+        n = len(statements)
+
+        self._ticker = yf.Ticker(symbol)
+        self._balance    = self._ticker.balance_sheet
+        self._cashflow   = self._ticker.cashflow
 
         self.revenues           = np.array([gusd(s, "financials", "income_statement", "revenues") for s in statements]) 
-        self.invested_cap       = np.array([NaN for _ in statements])
+        self.invested_cap       = expand(self._balance.loc["Invested Capital"].to_numpy(), n)
         self.gross              = np.array([gusd(s, "financials", "income_statement", "gross_profit") for s in statements])
         self.pretax             = np.array([gusd(s, "financials", "income_statement", "income_loss_from_continuing_operations_before_tax") for s in statements])
         self.net_after_tax      = np.array([gusd(s, "financials", "income_statement", "net_income_loss") for s in statements])
@@ -49,15 +59,16 @@ class PolygonProvider (DataProvider):
         self.shares             = self.net_after_tax / self._net_per_share
         self.income_date        = np.array([text_to_date(g(s, "filing_date")) for s in statements])
         self.oper_cashflow      = np.array([gusd(s, "financials", "cash_flow_statement", "net_cash_flow_from_operating_activities") for s in statements])
-        self.free_cashflow      = np.array([NaN for _ in statements])
+        self.free_cashflow      = expand(self._cashflow.loc["Free Cash Flow"].to_numpy(), n)
         self.assets             = np.array([gusd(s, "financials", "balance_sheet", "assets") for s in statements])
         self.current_lia        = np.array([gusd(s, "financials", "balance_sheet", "current_liabilities") for s in statements])
         self.liability          = np.array([gusd(s, "financials", "balance_sheet", "liabilities") for s in statements])
 
         self.years              = np.array([np.datetime_as_string(d, "Y") for d in self.income_date])
-        now = datetime.now()
-        allprices: Any = stocks_client.get_aggregate_bars(symbol, now-FIVEYEARS, now)
 
-        self.price = allprices["results"][-1]["c"]
-        dates = self.income_date.astype('datetime64[s]').tolist()
-        self.income_price = np.array([ next((price["vw"] for price in allprices["results"] if datetime.fromtimestamp(price["t"]/1000) - date < timedelta(weeks=2)), NaN) for date in dates ])
+        def get_hist(day):
+            try: return self._ticker.history(start=day, end=day+TENDAYS, interval="1d").iloc[0, 3] # Close Price
+            except: return NaN
+
+        self.income_price       = np.array([ get_hist(day) for day in self.income_date.astype('datetime64[s]').tolist() ])
+        self.price = self._ticker.info["currentPrice"]

@@ -2,9 +2,11 @@ import yfinance as yf
 import numpy as np
 from datetime import timedelta
 
+from src.data.base import DataProvider
+
 TWOWEEKS = timedelta(days=14)
 
-class YahooProvider :
+class YahooProvider (DataProvider) :
     def __init__ (self, symbol) : 
         self.symbol = symbol
         self._ticker = yf.Ticker(symbol)
