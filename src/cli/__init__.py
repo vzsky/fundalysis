@@ -32,6 +32,9 @@ class CliTools :
         # self.cache[symbol] = Fundamental(symbol, PolygonProvider, [os.environ["POLYGON_API"]])
         # self.cache[symbol] = Fundamental(symbol, YahooProvider)
 
+    def clear(self): 
+        self.cache = {}
+
 def read (number, unit="", color=True, colrev=0) -> str : 
     def colorize (s) :
         if color == False: return s

@@ -22,7 +22,8 @@ def optionalGet(dict, *args) :
 g = lambda s, *xs : optionalGet(s, *xs)
 def gusd (s, *xs) : 
     unit = g(s, *xs, "unit")
-    assert(isinstance(unit, str) and unit.lower() == "usd")
+    if not (isinstance(unit, str) and unit.lower() == "usd") : 
+        return NaN
     return g(s, *xs, "value")
 
 def text_to_date (text) : # YYYY-MM-DD 
@@ -49,14 +50,13 @@ class PolyYahooProvider (DataProvider):
         self._ticker = yf.Ticker(symbol)
         self._balance    = self._ticker.balance_sheet
         self._cashflow   = self._ticker.cashflow
-
+        
         self.revenues           = np.array([gusd(s, "financials", "income_statement", "revenues") for s in statements]) 
         self.invested_cap       = expand(self._balance.loc["Invested Capital"].to_numpy(), n)
         self.gross              = np.array([gusd(s, "financials", "income_statement", "gross_profit") for s in statements])
         self.pretax             = np.array([gusd(s, "financials", "income_statement", "income_loss_from_continuing_operations_before_tax") for s in statements])
         self.net_after_tax      = np.array([gusd(s, "financials", "income_statement", "net_income_loss") for s in statements])
-        self._net_per_share     = np.array([g(s, "financials", "income_statement", "basic_earnings_per_share", "value") for s in statements])
-        self.shares             = self.net_after_tax / self._net_per_share
+        self.shares             = expand(self._balance.loc["Ordinary Shares Number"].to_numpy(), n)
         self.income_date        = np.array([text_to_date(g(s, "filing_date")) for s in statements])
         self.oper_cashflow      = np.array([gusd(s, "financials", "cash_flow_statement", "net_cash_flow_from_operating_activities") for s in statements])
         self.free_cashflow      = expand(self._cashflow.loc["Free Cash Flow"].to_numpy(), n)

@@ -49,15 +49,15 @@ class Fundamental :
         self.share_growth_avg3  = avg(self.share_growth[:3])
 
         self.roic               = 100.0 * self.net_after_tax / self.invested_cap
-        self.roic_avg4          = avg(self.roic[:4])
+        self.roic_avg3          = avg(self.roic[:3])
 
         self.pe                 = (self.price * self.shares[0]) / self.net_after_tax[0]
         self.historic_pe        = self.income_price / self.net_after_tax * self.shares 
-        self.historic_pe_avg4   = avg(self.historic_pe[:4])
+        self.historic_pe_avg3   = avg(self.historic_pe[:3])
 
         self.pfcf               = (self.price * self.shares[0]) / self.free_cashflow[0]
         self.historic_pfcf      = self.income_price / self.free_cashflow * self.shares 
-        self.historic_pfcf_avg4 = avg(self.historic_pfcf[:4])
+        self.historic_pfcf_avg3 = avg(self.historic_pfcf[:3])
 
         self.li_per_fcf         = self.liability / self.free_cashflow
 

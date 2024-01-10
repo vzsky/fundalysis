@@ -14,6 +14,7 @@ def help():
     command.add_column("Command")
     command.add_column("Function")
     command.add_row("help", "show this message")
+    command.add_row("clear", "clear all cache")
     command.add_row("show [symbol]", "show fundamental analysis of [symbol]")
     command.add_row("fairprice (symbol)", "calculate discounted cashflow")
     cli.cons.print(command)
@@ -31,6 +32,8 @@ def main():
                     help()
                 if inp == "exit" or inp == "quit":
                     break
+                if inp == "clear" : 
+                    cli.clear()
             except Exception as err:
                 break
 

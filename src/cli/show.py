@@ -54,6 +54,9 @@ def show_value (ticker) :
     value.add_row("Asset / Liability", *[ read(g, "x") for g in ticker.assets_lia_ratio ]) 
     value.add_row()
     value.add_row("ROIC", *[ read(g, "%") for g in ticker.roic ])
+    value.add_row("Shares Outstanding", *[ read(g, "") for g in ticker.shares ])
+    value.add_row()
+    value.add_row("Price", *[ read(g, "$") for g in ticker.income_price ])
     value.add_row("P/E", *[ read(g, "x") for g in ticker.historic_pe ])
     value.add_row("P/FCF", *[ read(g, "x") for g in ticker.historic_pfcf ])
 
@@ -68,9 +71,9 @@ def show_checklist (ticker) :
         return f"[red]{s}[/red]"
 
     cli.cons.print(Columns([
-        Panel(f"4 year P/E RATIO \nis at {chcol(ticker.historic_pe_avg4, lambda x: x < 23, 'x')}"),
-        Panel(f"4 year P/FCF RATIO \nis at {chcol(ticker.historic_pfcf_avg4, lambda x: x < 23, 'x')}"), 
-        Panel(f"4 year ROIC \nis at {chcol(ticker.roic_avg4, lambda x: x > 10, '%')}"), 
+        Panel(f"3 year P/E RATIO \nis at {chcol(ticker.historic_pe_avg3, lambda x: x < 23, 'x')}"),
+        Panel(f"3 year P/FCF RATIO \nis at {chcol(ticker.historic_pfcf_avg3, lambda x: x < 23, 'x')}"), 
+        Panel(f"3 year ROIC \nis at {chcol(ticker.roic_avg3, lambda x: x > 10, '%')}"), 
         Panel(f"3 year Revenue Growth \nis at {chcol(ticker.rev_growth_avg3, lambda x: x > 1, '%')}"), 
         Panel(f"3 year Net Income Growth \nis at {chcol(ticker.net_growth_avg3, lambda x: x > 1, '%')}"),  
         Panel(f"3 year Share Buyback \nis at {chcol(ticker.share_growth_avg3, lambda x: x < -1, '%')}"), 
