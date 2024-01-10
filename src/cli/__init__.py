@@ -1,7 +1,9 @@
 from math import isnan
 from rich.console import Console
 from src.data.yahoo import YahooProvider
+from src.data.polygonio import PolygonProvider
 from src.fundamental import Fundamental
+import os
 
 class CliTools : 
 
@@ -25,7 +27,8 @@ class CliTools :
 
     def load(self, symbol: str):
         if symbol in self.cache : return
-        self.cache[symbol] = Fundamental(symbol, YahooProvider)
+        self.cache[symbol] = Fundamental(symbol, PolygonProvider, [os.environ["POLYGON_API"]])
+        # self.cache[symbol] = Fundamental(symbol, YahooProvider)
 
 def read (number, unit="", color=True, colrev=0) -> str : 
     def colorize (s) :

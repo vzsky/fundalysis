@@ -1,14 +1,11 @@
-import numpy as np
-from datetime import datetime, timedelta
-
 avg = lambda x : float(sum(x)) / len(x)
 growth = lambda x : 100.0 * (x[:-1] - x[1:]) / x[1:]
 
 
 class Fundamental :
-    def __init__(self, symbol, dataProvider):
+    def __init__(self, symbol, dataProvider, aux=[]):
 
-        self.data = dataProvider(symbol)
+        self.data = dataProvider(symbol, *aux)
         self.symbol = symbol
 
         ################################################################
@@ -35,27 +32,27 @@ class Fundamental :
         ################################################################
 
         self.rev_growth         = growth(self.revenues)
-        self.rev_growth_avg3    = avg(self.rev_growth)
+        self.rev_growth_avg3    = avg(self.rev_growth[:3])
 
         self.net_growth         = growth(self.net_after_tax)
-        self.net_growth_avg3    = avg(self.net_growth)
+        self.net_growth_avg3    = avg(self.net_growth[:3])
         
         self.fcf_growth         = growth(self.free_cashflow)
-        self.fcf_growth_avg3    = avg(self.fcf_growth)
+        self.fcf_growth_avg3    = avg(self.fcf_growth[:3])
 
         self.share_growth       = growth(self.shares)
-        self.share_growth_avg3  = avg(self.share_growth)
+        self.share_growth_avg3  = avg(self.share_growth[:3])
 
         self.roic               = 100.0 * self.net_after_tax / self.data.invested_cap
-        self.roic_avg4          = avg(self.roic)
+        self.roic_avg4          = avg(self.roic[:4])
 
         self.pe                 = (self.price * self.shares[0]) / self.net_after_tax[0]
         self.historic_pe        = self.income_price / self.net_after_tax * self.shares 
-        self.historic_pe_avg4   = avg(self.historic_pe)
+        self.historic_pe_avg4   = avg(self.historic_pe[:4])
 
         self.pfcf               = (self.price * self.shares[0]) / self.free_cashflow[0]
         self.historic_pfcf      = self.income_price / self.free_cashflow * self.shares 
-        self.historic_pfcf_avg4 = avg(self.historic_pfcf)
+        self.historic_pfcf_avg4 = avg(self.historic_pfcf[:4])
 
         self.li_per_fcf         = self.data.liability / self.data.free_cashflow
 
