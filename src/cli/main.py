@@ -46,3 +46,4 @@ def main():
         except Exception as e:
             cli.cons.print("An error occur", style="bold red")
             cli.cons.print(e)
+

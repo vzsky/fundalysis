@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from src.data.base import DataProvider
 
-TWOWEEKS = timedelta(days=14)
+TENDAYS = timedelta(days=10)
 
 class YahooProvider (DataProvider) :
     def __init__ (self, symbol) : 
@@ -28,10 +28,18 @@ class YahooProvider (DataProvider) :
         self.current_lia        = self._balance.loc["Current Liabilities"]                       .to_numpy()
         self.liability          = self._balance.loc["Total Liabilities Net Minority Interest"]   .to_numpy()
 
-        self.years              = np.array([np.datetime_as_string(d, "Y") for d in self.income_date])
+        try : 
+            income_years              = np.array([np.datetime_as_string(d, "Y") for d in self.income_date])
+            balance_years              = np.array([np.datetime_as_string(d, "Y") for d in self._balance.columns])
+            cashflow_years              = np.array([np.datetime_as_string(d, "Y") for d in self._cashflow.columns])
+
+            assert(income_years == cashflow_years and balance_years == cashflow_years)
+            self.years = income_years
+        except: 
+            raise Exception("Yahoo Financial Statements conflict")
 
         def get_hist(day):
-            try: return self._ticker.history(start=day, end=day+TWOWEEKS, interval="1d").iloc[0, 3] # Close Price
+            try: return self._ticker.history(start=day, end=day+TENDAYS, interval="1d").iloc[0, 3] # Close Price
             except: return float('nan')
 
         self.income_price       = np.array([ get_hist(day) for day in self.income_date.astype('datetime64[s]').tolist() ])

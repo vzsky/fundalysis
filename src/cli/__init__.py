@@ -28,9 +28,11 @@ class CliTools :
 
     def load(self, symbol: str):
         if symbol in self.cache : return
-        self.cache[symbol] = Fundamental(symbol, PolyYahooProvider, [os.environ["POLYGON_API"]])
-        # self.cache[symbol] = Fundamental(symbol, PolygonProvider, [os.environ["POLYGON_API"]])
-        # self.cache[symbol] = Fundamental(symbol, YahooProvider)
+        try : 
+            # self.cache[symbol] = Fundamental(symbol, PolygonProvider, [os.environ["POLYGON_API"]])
+            self.cache[symbol] = Fundamental(symbol, PolyYahooProvider, [os.environ["POLYGON_API"]])
+        except: 
+            self.cache[symbol] = Fundamental(symbol, YahooProvider)
 
     def clear(self): 
         self.cache = {}

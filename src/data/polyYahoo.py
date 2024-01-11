@@ -46,6 +46,8 @@ class PolyYahooProvider (DataProvider):
         assert(fin['status'] == 'OK')
         statements = fin['results']
         n = len(statements)
+        if n == 0 : 
+            raise Exception("polygon fail to find symbol") 
 
         self._ticker = yf.Ticker(symbol)
         self._balance    = self._ticker.balance_sheet
