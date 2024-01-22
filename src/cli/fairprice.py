@@ -3,7 +3,7 @@ from .main import cli
 from src.fundamental import disc_earning
 
 @cli.command
-def fairprice (symbol) : 
+def fairprice (symbol = None) : 
     if symbol != None and not cli.cached(symbol) : cli.load(symbol)
     ticker = cli.cached(symbol)
 

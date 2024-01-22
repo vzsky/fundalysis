@@ -37,7 +37,7 @@ def main():
             except Exception as err:
                 break
 
-            args = inp.split(" ")
+            args = inp.strip().split(" ")
             command = cli.cmd(args[0])
             if command:
                 command(*args[1:])
