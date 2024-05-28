@@ -59,7 +59,7 @@ def read (number, unit="", color=True, colrev=0) -> str :
         if abs(num) > 1000_000 : 
             return s(num / 1000_000) + "M" 
         if abs(num) > 1000 : 
-            return s(num / 1000) 
+            return s(num / 1000) + "k" 
         return s(num)
     
     return colorize(addunit(scale(number)))

@@ -7,7 +7,7 @@ from src.data.base import DataProvider
 TENDAYS = timedelta(days=10)
 
 class YahooProvider (DataProvider) :
-    def __init__ (self, symbol) : 
+    def __init__ (self, symbol) :
         self.symbol = symbol
         self._ticker = yf.Ticker(symbol)
 
